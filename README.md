@@ -1,4 +1,3 @@
-Sustainable AI Governance Router
 
 Single-GPU Model Water Savings Dashboard
 
