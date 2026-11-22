@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>AI Model Selection Dashboard</title>
+<style>
+:root{--navy:#163b5c;--blue:#347eb4;--cyan:#39a5b7;--teal:#25856f;--green:#5aa87d;--gold:#d7a13d;--purple:#7669a9;--ink:#294555;--muted:#6b7f8b;--line:#dce8ed;--bg:#f5f9fb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink)}
+.hero{background:linear-gradient(120deg,#e7f3fb 0%,#f7fbfd 50%,#eaf8f3 100%);border-bottom:1px solid #d8e8ee;padding:45px 5% 38px;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(65,165,184,.08);right:-80px;top:-120px}.wrap{max-width:1080px;margin:auto}.tag{display:inline-block;background:#fff;border:1px solid #cfe1ea;border-radius:20px;padding:6px 11px;font-size:9px;font-weight:900;letter-spacing:1px;color:var(--blue)}h1{font-size:38px;letter-spacing:-.8px;color:var(--navy);margin:12px 0 8px}.hero p{margin:0;color:#5e7583;font-size:13px;max-width:680px;line-height:1.55}.path{display:flex;align-items:center;gap:8px;margin-top:24px;flex-wrap:wrap}.step{background:#fff;border:1px solid #d8e6ec;border-radius:10px;padding:9px 13px;font-size:10px;font-weight:800;color:#547080}.step.active{background:var(--navy);color:#fff;border-color:var(--navy)}.arrow{color:#91a6b1;font-weight:800}
+main{max-width:1080px;margin:auto;padding:26px 18px 65px}.section-title{display:flex;align-items:center;gap:10px;margin:7px 0 15px}.section-title .n{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--navy);color:#fff;font-size:11px;font-weight:900}.section-title h2{font-size:19px;color:var(--navy);margin:0}.section-title span{font-size:10px;color:var(--muted)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:21px;box-shadow:0 9px 28px rgba(24,67,91,.06);margin-bottom:22px}.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.q{border:1px solid #e1ebef;border-radius:14px;padding:15px;background:#fff;position:relative;overflow:hidden;transition:.2s}.q:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(26,73,98,.07)}.q:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent,var(--blue))}.q:nth-child(2){--accent:var(--cyan)}.q:nth-child(3){--accent:var(--purple)}.q:nth-child(4){--accent:var(--teal)}.q:nth-child(5){--accent:var(--gold)}.q:nth-child(6){--accent:#d47a68}.q:nth-child(7){--accent:#5c82bd}.q:nth-child(8){--accent:var(--green)}.qtop{display:flex;gap:9px;align-items:flex-start}.ico{display:grid;place-items:center;min-width:29px;height:29px;border-radius:9px;background:#edf6fb;font-size:14px}.q b{display:block;font-size:12.5px;color:var(--navy);line-height:1.45;margin:3px 0 5px}.explain{font-size:10.5px;line-height:1.48;color:#70828d;margin:0 0 11px 38px}.q9{grid-column:1/-1;background:linear-gradient(120deg,#f2fbf8,#fbfefd)}select{width:100%;border:1px solid #cfdde4;background:#fbfdfe;border-radius:9px;padding:9px 10px;color:#405966;font-size:11px;outline:none}select:focus{border-color:#6ca8c9;box-shadow:0 0 0 3px #e7f3f9}.costs{display:flex;flex-wrap:wrap;gap:6px}.costs label{border:1px solid #d7e3e8;border-radius:20px;padding:6px 9px;font-size:9.5px;background:#fbfdfe;cursor:pointer}.costs label:has(input:checked){background:#e9f5fb;border-color:#83b8d2;color:#205d80;font-weight:700}.costs input{margin:0 4px 0 0;vertical-align:middle}.branch{display:none;grid-column:1/-1;background:linear-gradient(120deg,#effaf5,#f7fcfa);border:1px solid #bfe0cf;border-radius:14px;padding:16px}.branch .why{font-size:11px;color:#507466;line-height:1.5;margin-bottom:10px}.branch b{font-size:12.5px;color:#215e47;display:block;margin-bottom:9px}.action{text-align:right;margin-top:16px}button{border:0;background:linear-gradient(120deg,var(--navy),#286f9d);color:white;border-radius:10px;padding:11px 18px;font-weight:800;font-size:11px;cursor:pointer;box-shadow:0 5px 14px rgba(31,92,132,.18)}
+.results{display:none}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.fact{border:1px solid var(--line);border-radius:11px;padding:12px;background:#fbfdfe}.fact small{font-size:8px;color:#82939d;font-weight:900}.fact strong{display:block;margin-top:4px;color:var(--navy);font-size:11px}.needgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.need{border-radius:12px;padding:13px 14px;background:#f9fcfd;border:1px solid #dde9ed;border-left:4px solid var(--blue)}.need:nth-child(2n){border-left-color:var(--teal)}.need b{font-size:11px;color:var(--navy);display:block;margin-bottom:4px}.need span{font-size:10px;line-height:1.45;color:#637984}.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.opt{border-radius:15px;overflow:hidden;border:1px solid var(--line);background:#fff}.opthead{padding:15px}.opt:nth-child(1) .opthead{background:linear-gradient(120deg,#e6f3fb,#f4f9fc)}.opt:nth-child(2) .opthead{background:linear-gradient(120deg,#e8f7f2,#f5fbf8)}.opt:nth-child(3) .opthead{background:linear-gradient(120deg,#fff2d8,#fffaf0)}.opthead small{font-size:8px;font-weight:900;letter-spacing:.6px;color:#728893}.opthead h3{margin:4px 0 0;font-size:14px;color:var(--navy)}.opt ul{margin:0;padding:11px 24px 15px}.opt li{font-size:10px;line-height:1.5;color:#627783;margin:6px 0}
+.sus{display:none;background:linear-gradient(135deg,#eaf8f2,#f8fcfa);border:1px solid #b9decb}.sus-title{display:flex;gap:11px;align-items:center}.leaf{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:#d6f0e2;font-size:19px}.sus h2{margin:0;color:#205f46;font-size:18px}.sus-intro{font-size:10.5px;color:#587568;line-height:1.5;margin:10px 0 15px;max-width:850px}.comparison{background:#fff;border:1px solid #d3e7dc;border-radius:13px;padding:15px}.rgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}.comparison label{display:block;font-size:9px;font-weight:900;color:#557164;margin-bottom:5px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.metric{background:#f5fbf8;border:1px solid #dcece4;border-radius:10px;padding:11px}.metric small{font-size:8px;color:#758b80;font-weight:900}.metric strong{display:block;color:#225d45;font-size:15px;margin-top:4px}.note{font-size:8.5px;color:#708278;line-height:1.5;margin:10px 0 0}.footer{text-align:center;color:#8a99a1;font-size:8.5px;margin-top:25px}@media(max-width:760px){.qgrid,.needgrid,.opts,.rgrid{grid-template-columns:1fr}.summary,.metrics{grid-template-columns:1fr 1fr}h1{font-size:31px}}
+.evidence{background:linear-gradient(135deg,#f4f8fc,#fbfdfe);border-color:#cadde8}.evidence h2{margin:0;color:var(--navy);font-size:18px}.evsub{font-size:9px;color:#728894;margin-top:2px}.evintro{font-size:10.5px;line-height:1.55;color:#58717f;margin:12px 0}.caution{font-size:10px;line-height:1.5;background:#fff8e8;border:1px solid #ecd9a6;border-radius:10px;padding:10px 12px;color:#6e5a28;margin-bottom:12px}details{border:1px solid #d9e5eb;border-radius:11px;background:#fff;overflow:hidden}summary{cursor:pointer;padding:12px 14px;font-size:10.5px;font-weight:800;color:var(--navy);display:flex;justify-content:space-between}summary span{font-weight:500;color:#81939c}.tablewrap{max-height:440px;overflow:auto;border-top:1px solid #e1e9ed}table{width:100%;border-collapse:collapse;min-width:850px;font-size:9px}th{position:sticky;top:0;background:#edf5f9;color:#35576b;text-align:left;padding:9px;border-bottom:1px solid #cfdee6;z-index:1}td{padding:8px 9px;border-bottom:1px solid #edf2f4;color:#5b707b}.comparisonrow{background:#eaf8f1}.comparisonrow td:first-child{font-weight:800;color:#24654b}.badge{display:inline-block;background:#d5f0e2;color:#24654b;border:1px solid #a9d9bf;border-radius:12px;padding:2px 6px;font-size:7px;font-weight:900;margin-left:5px}.source{font-size:8.5px;color:#7d8f98;margin-top:9px;line-height:1.45}</style><style>
+.bridge{font-size:10.5px;line-height:1.55;color:#607783;margin:0 0 15px}
+.comparetable{display:grid;grid-template-columns:170px repeat(3,1fr);border:1px solid #dbe6eb;border-radius:14px;overflow:hidden}
+.chead{padding:14px 13px;font-size:11px;font-weight:850;color:var(--navy);border-right:1px solid #dbe6eb;border-bottom:1px solid #dbe6eb}
+.chead small{display:block;font-size:8px;font-weight:500;color:#71858f;margin-top:4px}.corner{background:#f7fafb}.blueh{background:#eaf5fb}.greenh{background:#eaf8f2}.goldh{background:#fff5df}
+.rowlabel{padding:14px 12px;background:#f8fbfc;border-right:1px solid #e2eaee;border-bottom:1px solid #e2eaee;font-size:10px;font-weight:850;color:#385b6d}
+.rowlabel small{display:block;font-size:7.5px;color:#8a9aa2;font-weight:600;margin-top:4px}.cell{padding:13px;border-right:1px solid #e2eaee;border-bottom:1px solid #e2eaee;font-size:9.5px;line-height:1.55;color:#5e7581}
+.sustainbridge{border-left:5px solid var(--green);background:linear-gradient(120deg,#effaf5,#fbfefd)}.sustainbridge h3{margin:0 0 6px;color:#246149;font-size:14px}.sustainbridge p{margin:0;font-size:10.5px;line-height:1.55;color:#5d776c}
+.forward{display:grid;grid-template-columns:1fr 1fr;gap:9px}.fq{background:#f8fbfc;border:1px solid #dce7eb;border-radius:10px;padding:11px 13px;font-size:10px;line-height:1.45;color:#526c79}.fnum{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:#e7f2f7;color:#285c78;font-weight:900;font-size:8px;margin-right:7px}
+@media(max-width:800px){.comparetable{grid-template-columns:125px repeat(3,220px);overflow:auto}.forward{grid-template-columns:1fr}}
+</style><style>
+.sustain-topic{grid-column:1/-1;border:1px solid #cfe7dc;background:linear-gradient(135deg,#f2faf6,#fbfefd);border-radius:18px;padding:15px;margin-top:2px}
+.sustain-topic-head{display:flex;gap:11px;align-items:flex-start;margin-bottom:12px;padding:2px 3px 10px;border-bottom:1px solid #dcece4}
+.sustain-topic-head .topicnum{width:31px;height:31px;border-radius:9px;background:#dff2e8;color:#28644b;display:grid;place-items:center;font-size:10px;font-weight:900}
+.sustain-topic-head h3{margin:1px 0 3px;font-size:14px;color:#245b46}
+.sustain-topic-head p{margin:0;font-size:9.5px;line-height:1.45;color:#688074}
+.sustain-q-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sustain-q-grid>div{margin:0!important;background:#fff!important}
+@media(max-width:760px){.sustain-q-grid{grid-template-columns:1fr}}
+</style><style>
+.sustain-q-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:14px!important;align-items:stretch!important}
+.sustain-subcard{background:#fff;border:1px solid #dcece4;border-radius:13px;padding:14px;display:flex;flex-direction:column;min-width:0}
+.subq-title{display:flex;gap:10px;align-items:flex-start;color:#173f63;font-size:13px;line-height:1.35;min-height:52px}
+.subq-icon{width:30px;height:30px;flex:0 0 30px;border-radius:9px;background:#edf6fb;display:grid;place-items:center;color:#355f72}
+.sustain-subcard p{font-size:9.5px!important;line-height:1.5!important;color:#687f8b!important;margin:10px 0 12px!important;flex:1}
+.sustain-subcard select{width:100%;min-height:42px;border:1px solid #cbdde5;border-radius:10px;background:#fbfdfe;padding:0 12px;color:#29495a}
+.footer:empty{display:none!important}
+@media(max-width:760px){.sustain-q-grid{grid-template-columns:1fr!important}}
+</style><style>
+.section1-next-final{position:static!important;display:flex!important;justify-content:flex-end!important;width:100%!important;margin:18px 0 30px!important;padding:0!important}
+.section1-next-final button{position:static!important;display:inline-flex!important;width:auto!important;background:#164f73!important;color:white!important;border:0!important;border-radius:12px!important;padding:14px 22px!important;font-size:12px!important;font-weight:800!important;cursor:pointer!important}
+#section2{scroll-margin-top:24px}
+</style>
+<style id="visual-redesign">
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{
+ --navy:#152d46;--blue:#2568a0;--cyan:#19a1a6;--teal:#168676;
+ --green:#2d9b76;--gold:#c58a2b;--purple:#7565aa;
+ --ink:#20384c;--muted:#63798b;--line:#e2eaf0;--bg:#f5f7fa
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#f5f7fa;color:var(--ink);font-size:14px}
+.hero{background:#142c45;padding:42px max(24px,calc((100% - 1190px)/2)) 46px;border:0;overflow:hidden}
+.hero:after{width:440px;height:440px;right:-115px;top:-220px;background:radial-gradient(circle,rgba(49,175,171,.23),transparent 67%)}
+.hero:before{content:"";position:absolute;width:500px;height:500px;right:8%;bottom:-460px;border-radius:50%;border:1px solid rgba(255,255,255,.1)}
+.hero .wrap{max-width:1190px;position:relative;z-index:1}
+.tag{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.19);color:#9be3da;font-size:10px;letter-spacing:1.5px;padding:8px 12px}
+h1{font-family:Manrope,system-ui,sans-serif;font-size:clamp(28px,3.4vw,45px);color:white;letter-spacing:-1.5px;margin:19px 0 12px;font-weight:800}
+.hero p{color:#bfd0df;font-size:14px;line-height:1.8;max-width:760px}
+.hero .hero-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.hero .hero-chips span{color:#e4f5f4;border:1px solid rgba(183,231,224,.25);background:rgba(255,255,255,.055);border-radius:99px;padding:9px 13px;font-size:11px;font-weight:700}
+main{max-width:1190px;padding:36px 22px 85px}
+.section-title{gap:15px;margin:8px 0 18px;align-items:center}
+.section-title .n{width:44px;height:44px;border-radius:13px;font-size:13px;background:#183a58;box-shadow:0 5px 13px rgba(16,47,75,.13)}
+.section-title h2{font-family:Manrope,system-ui,sans-serif;font-size:23px;letter-spacing:-.6px}
+.section-title span{font-size:12px;display:block;margin-top:4px;line-height:1.5}
+.panel{border:1px solid #e4eaf0;border-radius:20px;padding:22px;box-shadow:0 12px 35px rgba(26,53,78,.045);margin-bottom:25px}
+.qgrid{gap:12px}
+.q{border:1px solid #e3eaf0;border-radius:14px;padding:17px 17px 15px;background:#fff;transition:box-shadow .2s,transform .2s}
+.q:hover{transform:none;box-shadow:0 6px 18px rgba(28,67,94,.065)}
+.q:before{width:3px;border-radius:3px 0 0 3px;opacity:.7}
+.qtop{gap:11px}
+.ico{min-width:34px;height:34px;font-size:15px;border-radius:10px;background:#edf4f8}
+.q b{font-size:13px;margin:2px 0 6px;line-height:1.4}
+.explain{font-size:11px;line-height:1.55;margin:0 0 12px 45px;color:#6b7e8c}
+select{padding:11px 12px;font-size:12px;background:#f9fbfd;border:1px solid #dce6ed;border-radius:9px;min-height:41px}
+.costs{gap:7px}.costs label{font-size:10px;padding:8px 10px;background:#f8fafc}
+.sustain-topic{border-radius:14px;padding:15px;background:#f2f9f6;border:1px solid #d5e8df}
+.sustain-topic-head{margin-bottom:13px}.sustain-topic-head h3{font-size:15px}
+.sustain-topic-head p{font-size:10.5px}
+.sustain-subcard{border-radius:12px;padding:14px}
+.subq-title{font-size:12px;min-height:0}
+.sustain-subcard p{font-size:10.5px!important;margin:10px 0 12px!important}
+.sustain-subcard select{min-height:41px}
+button,.section1-next-final button{font-family:inherit;letter-spacing:.1px;background:#1d648f!important;border-radius:10px!important;padding:13px 20px!important;font-size:12px!important;box-shadow:0 6px 16px rgba(23,87,132,.14)}
+button:hover{filter:brightness(1.08)}
+.section1-next-final{margin:6px 0 30px!important}
+.bridge{font-size:12px;line-height:1.7;margin:0 0 17px;color:#617788}
+.comparetable{grid-template-columns:165px repeat(3,minmax(0,1fr));border-radius:12px;border-color:#e1e8ed}
+.chead{font-size:12px;padding:16px 13px;line-height:1.4}
+.chead small{font-size:10px;line-height:1.5}
+.rowlabel{padding:15px 12px;font-size:11px;line-height:1.4}
+.rowlabel small{font-size:9px;margin-top:6px}
+.cell{font-size:11px;line-height:1.65;padding:15px 13px;overflow-wrap:anywhere}
+.blueh{background:#e9f2fa}.greenh{background:#eaf7f2}.goldh{background:#fff6e8}
+.evidence{background:#f9fbfd}.evidence h2{font-size:18px}
+.evintro,.sus-intro{font-size:11px;line-height:1.7}
+.caution{font-size:11px}
+.sustainbridge{border-left:4px solid #329b7c}
+.sustainbridge h3{font-size:15px}
+.sustainbridge p{font-size:11px;line-height:1.7}
+.comparison{border-radius:13px}
+.metric{padding:15px}.metric small{font-size:9px}.metric strong{font-size:20px}
+.note{font-size:10px;line-height:1.7}
+#section2{scroll-margin-top:24px}
+@media(max-width:900px){
+ .comparetable{grid-template-columns:135px repeat(3,minmax(0,1fr))}
+ .cell{font-size:10px;padding:11px 9px}.chead{font-size:11px;padding:11px 9px}
+}
+@media(max-width:700px){
+ .hero{padding:36px 22px}.hero p{font-size:12px}
+ main{padding:25px 12px 55px}
+ .panel{padding:13px;border-radius:16px}
+ .qgrid{grid-template-columns:1fr}
+ .section-title h2{font-size:19px}
+ .sustain-q-grid{grid-template-columns:1fr!important}
+ .comparetable{display:block;overflow-x:auto}
+ .comparetable > div{min-width:0}
+ .comparetable{display:grid;grid-template-columns:135px repeat(3,210px)}
+ .metrics{grid-template-columns:1fr 1fr}
+}
+</style>
+<style id="structural-redesign">
+/* Compact assessment cards without removing explanations or inputs */
+main{max-width:1280px}.qgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.q{padding:13px 15px;border-radius:12px}.q b{font-size:12px;margin:1px 0 4px}.q .explain{font-size:10px;line-height:1.42;margin:0 0 8px 44px}.q .ico{height:30px;min-width:30px}.q select{min-height:36px;padding:7px 10px}.q .costs label{padding:5px 8px}.sustain-topic{padding:12px}.sustain-topic-head{padding-bottom:8px;margin-bottom:8px}.sustain-subcard{padding:11px}.sustain-subcard p{margin:7px 0!important;font-size:10px!important}.sustain-subcard select{min-height:36px}.subq-title{font-size:11px}.sustain-q-grid{gap:8px!important}
+.option-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.option-card{border:1px solid #dfe8ee;border-radius:15px;overflow:hidden;background:white;min-width:0;box-shadow:0 4px 18px rgba(27,62,87,.045)}
+.option-head{padding:19px 18px 16px;min-height:125px}.option-head h3{font-family:Manrope,sans-serif;font-size:16px;letter-spacing:-.35px;color:#193955;margin:9px 0 6px}.option-head p{font-size:11px;color:#567284;margin:0}.option-kicker,.overview-eyebrow{font-size:9px;letter-spacing:1.3px;font-weight:800;color:#2e728f}
+.option-body{padding:3px 16px}.option-detail{padding:15px 0;border-bottom:1px solid #e8eef2}.option-detail:last-child{border:0}.detail-heading{font-size:11px;font-weight:800;color:#203e55;display:flex;align-items:center;justify-content:space-between;gap:8px}.detail-heading small{font-size:9px;white-space:nowrap;color:#8094a2;font-weight:600}.option-detail p{font-size:11px;line-height:1.65;color:#526b7c;margin:8px 0 0}
+.response-overview{display:flex;align-items:center;gap:25px;justify-content:space-between;background:#edf5f9;border:1px solid #dbe9f1;border-radius:16px;padding:18px 21px;margin:0 0 16px}.response-overview>div:first-child{flex:0 0 245px}.response-overview h3{font-size:16px;margin:7px 0 5px;color:#1d425f}.response-overview p{font-size:11px;line-height:1.55;color:#657e8e;margin:0}.answer-chips{display:flex;gap:7px;flex-wrap:wrap}.answer-chips span{background:white;border:1px solid #dbe6ee;padding:7px 9px;border-radius:8px;font-size:10px;color:#547083}.answer-chips b{color:#264d67;font-size:10px}
+.resource-link{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:18px 20px;background:#eff8f3;border:1px solid #cfe7da;border-radius:14px;margin:0 0 17px}.resource-link strong{display:block;color:#1f624b;font-size:14px;margin:6px 0}.resource-link p{margin:0;font-size:11px;line-height:1.5;color:#557b6b}.resource-link button{white-space:nowrap;background:#267f64!important}
+.resource-story{border-left:4px solid #2e9d77;background:#edf8f2;padding:16px 19px;margin-bottom:15px;border-radius:0 12px 12px 0}.resource-story h3{font-size:15px;margin:7px 0;color:#1f634a}.resource-story p{font-size:11px;margin:0;color:#567a6b;line-height:1.6}
+.impact-bars{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:16px 0}.impact-bars span{font-size:10px;font-weight:700;color:#557567}.impact-track{background:#e3ede8;height:9px;border-radius:99px;overflow:hidden;margin-top:7px}.impact-fill{width:0;background:#308c71;height:100%;border-radius:99px;transition:width .25s}.water-fill{background:#63a6c6}
+@media(max-width:900px){.option-grid{grid-template-columns:1fr}.option-head{min-height:0}.option-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}.response-overview{display:block}.response-overview>div:first-child{margin-bottom:12px}}
+@media(max-width:700px){.qgrid{grid-template-columns:1fr}.option-body{display:block}.resource-link{display:block}.resource-link button{margin-top:14px}.impact-bars{grid-template-columns:1fr}}
+</style><style id="wizard-polish">
+body{background:#f3f6f9}.hero{padding-bottom:30px}main{max-width:1200px}
+#wizard-nav{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e1e9f0;padding:12px;border-radius:18px;box-shadow:0 9px 30px rgba(20,52,78,.06);margin:-9px 0 30px;position:relative;z-index:2}
+.wizard-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:12px;background:transparent!important;box-shadow:none!important;color:#60768a!important;padding:12px 8px!important;border-radius:11px!important;white-space:normal;text-align:left;font-size:12px!important}
+.wizard-tab span{width:32px;height:32px;flex:none;display:grid;place-items:center;border-radius:10px;background:#edf2f6;color:#6a7e8e;font-weight:800}
+.wizard-tab.active{background:#eaf3f8!important;color:#173b5a!important}.wizard-tab.active span{background:#1c5c87;color:#fff}
+#wizard-nav i{height:22px;width:1px;background:#e4ebf0}
+.wizard-step{animation:fadeStep .2s ease-out}@keyframes fadeStep{from{opacity:.65;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.wizard-step .qgrid{gap:10px}.wizard-step .q{padding:13px 15px}.wizard-step .q b{font-size:12px}.wizard-step .explain{font-size:10.5px;margin-bottom:9px}.wizard-step select{min-height:38px;padding:8px 10px}
+.wizard-step .sustain-topic{padding:12px}.wizard-step .sustain-subcard{padding:11px}.wizard-step .sustain-subcard p{margin:7px 0!important}
+.wizard-step .panel{margin-bottom:16px}.wizard-step .section-title{margin-bottom:13px}
+.wizard-actions{display:flex;justify-content:space-between;gap:12px;margin:25px 0}.wizard-actions .back{background:#e9f0f5!important;color:#1e4d70!important;box-shadow:none!important}
+#sustain-off h3{font-size:17px;color:#173b5a}#sustain-off p{line-height:1.7;font-size:13px}
+#results .section1-next-final{display:none!important}
+#sustainBlock{display:block}
+@media(max-width:700px){#wizard-nav{gap:3px;padding:6px}.wizard-tab{flex-direction:column;gap:5px!important;font-size:9px!important;text-align:center!important;padding:9px 3px!important}.wizard-tab span{width:26px;height:26px}#wizard-nav i{display:none}.wizard-actions{flex-direction:column}}
+</style></head><body>
+<div class="hero"><div class="wrap"><span class="tag">ORGANIZATIONAL DECISION SUPPORT</span><h1>AI Model Selection Dashboard</h1><p>Understand your organization’s needs and compare different ways to select and operate generative AI. Sustainability and resource use can also be examined when they are relevant to your organization.</p></div></div>
+<main><nav aria-label="Dashboard steps" id="wizard-nav"><button class="wizard-tab active" onclick="showStep(1)" type="button"><span>01</span><strong>Understand Your Needs</strong></button><i></i><button class="wizard-tab" onclick="goCompare()" type="button"><span>02</span><strong>Compare AI Options</strong></button><i></i><button class="wizard-tab" onclick="goSustain()" type="button"><span>03</span><strong>Explore Sustainability</strong></button></nav>
+<section class="wizard-step" id="wizard-step-1" style="display:block"><div class="section-title"><div class="n">01</div><div><h2>Define Your Organization’s AI Needs</h2><span>Consider eight areas that shape how your organization may select and operate generative AI</span></div></div><div class="panel"><div class="qgrid">
+<div class="q"><div class="qtop"><span class="ico">⚙</span><b>1. Who would operate the AI system?</b></div><p class="explain">Think about who would be responsible for setting up, monitoring, updating, and maintaining the AI system after it is introduced.</p><select id="operator"><option>Internal IT</option><option>External provider</option><option selected="">Not decided</option></select></div>
+<div class="q"><div class="qtop"><span class="ico">▦</span><b>2. Do you already have GPU infrastructure available for AI workloads?</b></div><p class="explain">Running AI models internally may require specialized computing resources such as GPUs. Does your organization already have these resources available for AI use?</p><select id="gpu"><option>Yes</option><option selected="">No</option></select></div>
+<div class="q"><div class="qtop"><span class="ico">◈</span><b>3. Can the intended data be sent to an external AI provider?</b></div><p class="explain">Consider the data that users or applications may send to the AI system. Are there privacy, security, policy, or other restrictions on sending this data outside your organization?</p><select id="data"><option>Yes</option><option>No</option><option selected="">Depends on data</option></select></div>
+<div class="q"><div class="qtop"><span class="ico">☁</span><b>4. Are you already committed to a cloud/provider ecosystem?</b></div><p class="explain">For example, your organization may already rely heavily on AWS, Azure, or Google for cloud services, identity, data, or applications.</p><select id="cloud"><option>AWS</option><option>Azure</option><option>Google</option><option>Other</option><option selected="">No</option></select></div>
+<div class="q"><div class="qtop"><span class="ico">$</span><b>5. Which costs have you evaluated?</b></div><p class="explain">AI costs can extend beyond the advertised subscription or API price. Select the costs your organization has already considered.</p><div class="costs" id="costs"><label><input type="checkbox" value="API fees"/>API fees</label><label><input type="checkbox" value="hardware"/>hardware</label><label><input type="checkbox" value="cloud compute"/>cloud compute</label><label><input type="checkbox" value="staff"/>staff</label><label><input type="checkbox" value="maintenance"/>maintenance</label><label><input type="checkbox" value="migration"/>migration</label></div></div>
+<div class="q"><div class="qtop"><span class="ico">⇄</span><b>6. Would changing approach require rebuilding integrations or workflows?</b></div><p class="explain">Think about systems connected to your current AI service, such as login, applications, data pipelines, or work processes. Would moving to another approach require changes to them?</p><select id="switching"><option>Yes</option><option>No</option><option selected="">Unknown</option></select></div>
+<div class="q"><div class="qtop"><span class="ico">⌂</span><b>7. Do you need the model to run inside infrastructure you control?</b></div><p class="explain">Some organizations may require the AI model or its data processing to remain within infrastructure they directly control rather than relying entirely on an external provider.</p><select id="control"><option>Yes</option><option>No</option><option selected="">Unsure</option></select></div>
+<div class="q"><div class="sustain-topic">
+<div class="sustain-topic-head"><div class="topicnum">08</div><div><h3>Sustainability &amp; Resource Use</h3><p>Consider whether environmental resource use and different model choices should be part of your organization’s evaluation.</p></div></div>
+<div class="sustain-q-grid">
+<div class="sustain-subcard">
+<div class="subq-title"><span class="subq-icon">♧</span><strong>8A. Do you want energy and water use considered in model selection?</strong></div>
+<p>AI models can differ in the computing resources they use. Select Yes if environmental resource use should be considered when examining model choices.</p>
+<select id="sustain"><option>Yes</option><option>No</option></select>
+</div>
+<div class="sustain-subcard">
+<div class="subq-title"><span class="subq-icon">↔</span><strong>8B. Could your organization consider using different AI models for different types of tasks?</strong></div>
+<p>Different AI tasks may not require the same level of model capability. Using the same large model for every task may use more computing resources than necessary.</p>
+<select id="multi"><option>Yes</option><option>No</option><option>Not sure</option></select>
+</div>
+</div>
+</div>
+<button onclick="run()">Compare AI options →</button></div></div>
+</div></section><section class="wizard-step" id="wizard-step-2" style="display:none"><div class="results" id="results" style="display:block">
+<div class="section1-next-final"></div>
+<div class="section-title" id="section2"><div class="n">02</div><div><h2>Compare AI Options for Your Organization</h2><span>Your answers above shape the considerations shown in this comparison</span></div></div>
+<div class="response-overview"><div><span class="overview-eyebrow">BASED ON YOUR ANSWERS</span><h3>Your decision context</h3><p>These selections shape the considerations in each option below. They do not produce a score or recommendation.</p></div><div aria-live="polite" class="answer-chips" id="answerChips"></div></div>
+<div class="panel">
+<p class="bridge">The options are not ranked and the dashboard does not choose one for you. It shows what should be examined for each AI option based on your organization’s answers.</p>
+<div class="resource-link" id="sustainLink" style="display:none"><div><span class="overview-eyebrow">MODEL SELECTION + RESOURCE USE</span><strong>Environmental impact is part of your criteria</strong><p>Review the measured energy evidence and estimated water differences after comparing your AI options.</p></div><button onclick="showStep(3)" type="button">Explore resource use ↓</button></div>
+<div class="option-grid">
+<article class="option-card"><div class="option-head blueh"><span class="option-kicker">OPTION 01</span><h3>Proprietary / External</h3><p>Provider operates the model</p></div><div class="option-body"><div class="option-detail"><div class="detail-heading">Operation &amp; infrastructure <small>Q1 · Q2 · Q7</small></div><p id="pOperate"></p></div><div class="option-detail"><div class="detail-heading">Data &amp; organizational fit <small>Q3 · Q4 · Q6</small></div><p id="pFit"></p></div><div class="option-detail"><div class="detail-heading">Cost &amp; ongoing requirements <small>Q5</small></div><p id="pTime"></p></div><div class="option-detail"><div class="detail-heading">Model flexibility <small>Q8B</small></div><p id="pModel"></p></div></div></article>
+<article class="option-card"><div class="option-head greenh"><span class="option-kicker">OPTION 02</span><h3>Managed Open</h3><p>Open model, externally operated</p></div><div class="option-body"><div class="option-detail"><div class="detail-heading">Operation &amp; infrastructure <small>Q1 · Q2 · Q7</small></div><p id="mOperate"></p></div><div class="option-detail"><div class="detail-heading">Data &amp; organizational fit <small>Q3 · Q4 · Q6</small></div><p id="mFit"></p></div><div class="option-detail"><div class="detail-heading">Cost &amp; ongoing requirements <small>Q5</small></div><p id="mTime"></p></div><div class="option-detail"><div class="detail-heading">Model flexibility <small>Q8B</small></div><p id="mModel"></p></div></div></article>
+<article class="option-card"><div class="option-head goldh"><span class="option-kicker">OPTION 03</span><h3>Self-Hosted Open</h3><p>Organization operates the model</p></div><div class="option-body"><div class="option-detail"><div class="detail-heading">Operation &amp; infrastructure <small>Q1 · Q2 · Q7</small></div><p id="sOperate"></p></div><div class="option-detail"><div class="detail-heading">Data &amp; organizational fit <small>Q3 · Q4 · Q6</small></div><p id="sFit"></p></div><div class="option-detail"><div class="detail-heading">Cost &amp; ongoing requirements <small>Q5</small></div><p id="sTime"></p></div><div class="option-detail"><div class="detail-heading">Model flexibility <small>Q8B</small></div><p id="sModel"></p></div></div></article>
+</div></div>
+
+<div class="footer"></div></div><div class="wizard-actions"><button class="back" onclick="showStep(1)" type="button">← Review your answers</button><button onclick="goSustain()" type="button">Explore sustainability →</button></div></section><section class="wizard-step" id="wizard-step-3" style="display:none"><div class="panel" id="sustain-off" style="display:none"><h3>Environmental considerations are optional</h3><p>You selected No for including energy and water use. You can return to Step 1 and select Yes to explore the published model energy benchmarks and illustrative water estimates.</p><button onclick="showStep(1)" type="button">Change sustainability answer</button></div><div id="sustainBlock">
+<div class="section-title"><div class="n">03</div><div><h2>Sustainability &amp; Resource Use</h2><span>Connected to your answers to Question 8A and 8B</span></div></div>
+<div class="panel sustainbridge"><h3 id="sustainHeading"></h3><p id="sustainBridgeText"></p></div>
+<div class="resource-story"><span class="overview-eyebrow">FROM MODEL CHOICE TO RESOURCE USE</span><h3>Model choice can affect operational energy use</h3><p>Explore measured model configurations below. The comparison illustrates resource differences, not whether a model meets your task requirements.</p></div>
+<div class="panel evidence" id="evidence"><div class="sus-title"><div class="leaf">↯</div><div><h2>Published Model–Energy Comparison</h2><div class="evsub">Evidence used to ground the interactive resource comparison</div></div></div>
+<p class="evintro">Caravaca, Cuevas, and Cuevas (2025) measured LLM inference energy across many model architectures and GPU configurations. The table below reproduces the models reported in their Table IV. <b>Energy</b> is the optimized/batched energy per prompt; <b>Energy₁</b> is the energy when only one prompt is processed. Rows marked <span class="badge">COMPARISON</span> are the five representative entries used in this dashboard's interactive resource comparison.</p>
+<div class="caution"><b>Interpret carefully.</b> Model parameter count alone does not determine energy use. Hardware, GPU count, architecture, prompt/output length, batching, and other deployment conditions also affect inference energy.</div>
+<details><summary>View full benchmark table <span>55 model configurations</span></summary><div class="tablewrap"><table><thead><tr><th>Model</th><th>GPU</th><th>GPU Count</th><th>Parameters (B)</th><th>Energy (Wh/prompt)</th><th>Energy₁ (Wh/prompt)</th></tr></thead><tbody><tr class=""><td>deepseek-ai/DeepSeek-V3</td><td>NVIDIA A100-SXM4-80GB</td><td>32</td><td>678</td><td>0.6912</td><td>56.9348</td></tr><tr class=""><td>meta-llama/Llama-3.1-405B</td><td>NVIDIA H100 80GB HBM3</td><td>16</td><td>405.85</td><td>0.3542</td><td>21.6722</td></tr><tr class=""><td>deepseek-ai/DeepSeek-V2</td><td>NVIDIA A100-SXM4-80GB</td><td>8</td><td>235.74</td><td>0.5320</td><td>11.5938</td></tr><tr class=""><td>Qwen/Qwen2.5-72B</td><td>NVIDIA H100 80GB HBM3</td><td>4</td><td>72.71</td><td>0.0870</td><td>—</td></tr><tr class=""><td>meta-llama/Meta-Llama-3-70B</td><td>NVIDIA H100 80GB HBM3</td><td>4</td><td>70.55</td><td>0.0835</td><td>—</td></tr><tr class=""><td>facebook/opt-66b</td><td>NVIDIA H100 80GB HBM3</td><td>4</td><td>65.72</td><td>0.1038</td><td>—</td></tr><tr class=""><td>mistralai/Mixtral-8x7B-v0.1</td><td>NVIDIA A100-SXM4-80GB</td><td>2</td><td>46.70</td><td>0.0485</td><td>1.1308</td></tr><tr class=""><td>microsoft/Phi-3.5-MoE-instruct</td><td>NVIDIA A100-SXM4-80GB</td><td>2</td><td>41.87</td><td>0.0700</td><td>—</td></tr><tr class=""><td>Qwen/QwQ-32B</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>32.76</td><td>0.0361</td><td>1.0753</td></tr><tr class=""><td>bavest/fin-llama-33b-merged</td><td>NVIDIA H100 80GB HBM3</td><td>2</td><td>32.53</td><td>0.0576</td><td>1.4693</td></tr><tr class="comparisonrow"><td>Qwen/Qwen1.5-32B-Chat <span class="badge">COMPARISON</span></td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>32.51</td><td>0.0356</td><td>1.0757</td></tr><tr class=""><td>facebook/opt-30b</td><td>NVIDIA H100 80GB HBM3</td><td>2</td><td>29.98</td><td>0.0519</td><td>1.3640</td></tr><tr class=""><td>mosaicml/mpt-30b</td><td>NVIDIA H100 80GB HBM3</td><td>2</td><td>29.96</td><td>0.0464</td><td>1.2334</td></tr><tr class=""><td>google/gemma-2-27b</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>27.23</td><td>0.0289</td><td>0.9186</td></tr><tr class=""><td>mistralai/Mistral-Small-24B-Base-2501</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>23.57</td><td>0.0231</td><td>0.7510</td></tr><tr class=""><td>Vezora/Mistral-22B-v0.2</td><td>NVIDIA A100-SXM4-80GB</td><td>1</td><td>22.24</td><td>0.0313</td><td>0.8120</td></tr><tr class=""><td>EleutherAI/gpt-neox-20b</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>20.55</td><td>0.0358</td><td>0.7666</td></tr><tr class=""><td>FelixChao/Magician-MoE-4x7B</td><td>NVIDIA A100-SXM4-80GB</td><td>1</td><td>19.73</td><td>0.0313</td><td>0.5528</td></tr><tr class=""><td>deepseek-ai/DeepSeek-V2-Lite</td><td>NVIDIA L4</td><td>2</td><td>15.71</td><td>0.0363</td><td>0.4613</td></tr><tr class=""><td>Qwen/Qwen2.5-14B</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>14.77</td><td>0.0187</td><td>0.5544</td></tr><tr class=""><td>microsoft/phi-4</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>14.66</td><td>0.0172</td><td>0.4940</td></tr><tr class=""><td>Qwen/Qwen1.5-MoE-A2.7B</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>14.32</td><td>0.0152</td><td>0.2542</td></tr><tr class=""><td>Qwen/Qwen1.5-14B-Chat</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>14.17</td><td>0.0238</td><td>0.4929</td></tr><tr class=""><td>microsoft/Phi-3-medium-4k-instruct</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>13.96</td><td>0.0148</td><td>0.4851</td></tr><tr class=""><td>meta-llama/Llama-2-13b-chat-hf</td><td>NVIDIA A100-SXM4-80GB</td><td>1</td><td>13.02</td><td>0.0253</td><td>0.4966</td></tr><tr class=""><td>PygmalionAI/mythalion-13b</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>13.02</td><td>0.0240</td><td>0.4442</td></tr><tr class=""><td>cloudyu/Mixtral_7Bx2_MoE_13B</td><td>NVIDIA A100-SXM4-80GB</td><td>1</td><td>12.88</td><td>0.0235</td><td>0.5768</td></tr><tr class="comparisonrow"><td>facebook/opt-13b <span class="badge">COMPARISON</span></td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>12.85</td><td>0.0235</td><td>0.5143</td></tr><tr class=""><td>google/gemma-2-9b</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>9.24</td><td>0.0147</td><td>—</td></tr><tr class=""><td>google/gemma-7b</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>8.54</td><td>0.0133</td><td>—</td></tr><tr class=""><td>meta-llama/Llama-3.1-8B</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>8.03</td><td>0.0075</td><td>0.2788</td></tr><tr class=""><td>BSC-LT/salamandra-7b</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>7.77</td><td>0.0084</td><td>0.2410</td></tr><tr class=""><td>Qwen/Qwen1.5-7B</td><td>NVIDIA A100-SXM4-40GB</td><td>1</td><td>7.72</td><td>0.0133</td><td>0.2923</td></tr><tr class=""><td>Qwen/Qwen2.5-7B</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>7.62</td><td>0.0078</td><td>—</td></tr><tr class=""><td>mistralai/Mistral-7B-v0.3</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>7.25</td><td>0.0074</td><td>0.2575</td></tr><tr class=""><td>bertin-project/Gromenauer-7B</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>7.24</td><td>0.0091</td><td>0.2645</td></tr><tr class=""><td>NousResearch/Yarn-Mistral-7b-128k</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>7.24</td><td>0.0092</td><td>0.2528</td></tr><tr class=""><td>meta-llama/Llama-2-7b-hf</td><td>NVIDIA A100-SXM4-40GB</td><td>1</td><td>6.74</td><td>0.0145</td><td>0.2595</td></tr><tr class="comparisonrow"><td>facebook/opt-6.7b <span class="badge">COMPARISON</span></td><td>NVIDIA A100-SXM4-40GB</td><td>1</td><td>6.66</td><td>0.0147</td><td>0.2792</td></tr><tr class=""><td>Qwen/Qwen1.5-4B</td><td>NVIDIA A100-SXM4-40GB</td><td>1</td><td>3.95</td><td>0.0095</td><td>0.1749</td></tr><tr class=""><td>microsoft/Phi-3-mini-128k-instruct</td><td>NVIDIA L4</td><td>2</td><td>3.82</td><td>0.0137</td><td>0.3764</td></tr><tr class=""><td>meta-llama/Llama-3.2-3B</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>3.21</td><td>0.0047</td><td>0.1669</td></tr><tr class=""><td>Qwen/Qwen2.5-3B</td><td>NVIDIA A100-SXM4-40GB</td><td>1</td><td>3.09</td><td>0.0050</td><td>0.1567</td></tr><tr class=""><td>microsoft/phi-2</td><td>NVIDIA A100-SXM4-40GB</td><td>1</td><td>2.78</td><td>0.0074</td><td>0.1744</td></tr><tr class=""><td>facebook/opt-2.7b</td><td>NVIDIA A100-SXM4-40GB</td><td>1</td><td>2.65</td><td>0.0073</td><td>0.1767</td></tr><tr class=""><td>google/gemma-2-2b</td><td>NVIDIA H100 80GB HBM3</td><td>1</td><td>2.61</td><td>0.0071</td><td>0.2101</td></tr><tr class="comparisonrow"><td>google/gemma-2b <span class="badge">COMPARISON</span></td><td>NVIDIA A100-SXM4-40GB</td><td>1</td><td>2.51</td><td>0.0048</td><td>0.1347</td></tr><tr class=""><td>Qwen/Qwen1.5-1.8B</td><td>NVIDIA L4</td><td>1</td><td>1.84</td><td>0.0049</td><td>0.1066</td></tr><tr class=""><td>Qwen/Qwen2.5-1.5B</td><td>NVIDIA L4</td><td>1</td><td>1.54</td><td>0.0035</td><td>0.1281</td></tr><tr class=""><td>facebook/opt-1.3b</td><td>NVIDIA L4</td><td>1</td><td>1.32</td><td>0.0052</td><td>0.0854</td></tr><tr class="comparisonrow"><td>meta-llama/Llama-3.2-1B <span class="badge">COMPARISON</span></td><td>NVIDIA L4</td><td>1</td><td>1.24</td><td>0.0028</td><td>0.0698</td></tr><tr class=""><td>Qwen/Qwen2.5-0.5B</td><td>NVIDIA L4</td><td>1</td><td>0.49</td><td>0.0021</td><td>0.0677</td></tr><tr class=""><td>Qwen/Qwen1.5-0.5B</td><td>NVIDIA A100-SXM4-40GB</td><td>1</td><td>0.46</td><td>0.0027</td><td>0.0758</td></tr><tr class=""><td>facebook/opt-350m</td><td>NVIDIA L4</td><td>1</td><td>0.33</td><td>0.0026</td><td>0.0533</td></tr><tr class=""><td>facebook/opt-125m</td><td>NVIDIA L4</td><td>1</td><td>0.12</td><td>0.0015</td><td>0.0301</td></tr></tbody></table></div></details>
+<div class="source">Source: Caravaca, F., Cuevas, Á., &amp; Cuevas, R. (2025). <i>From Prompts to Power: Measuring the Energy Footprint of LLM Inference</i>, Table IV, arXiv:2511.05597.</div></div>
+<div class="panel sus" id="sus"><div class="sus-title"><div class="leaf">♧</div><div><h2>interactive resource comparison</h2></div></div><div class="sus-intro" id="susintro"></div>
+<div class="comparison"><div class="rgrid"><div><label>Current / larger model</label><select id="m1" onchange="route()"><option value="32.51">Qwen1.5-32B-Chat</option><option value="12.85">OPT-13B</option><option value="6.66">OPT-6.7B</option><option value="2.51">Gemma-2B</option><option value="1.24">Llama-3.2-1B</option></select></div><div><label>Smaller comparison model</label><select id="m2" onchange="route()"><option value="1.24">Llama-3.2-1B</option><option value="2.51">Gemma-2B</option><option value="6.66">OPT-6.7B</option><option value="12.85">OPT-13B</option><option value="32.51">Qwen1.5-32B-Chat</option></select></div><div><label>Workload</label><select id="prompts" onchange="route()"><option value="100">100 prompts</option><option selected="" value="1000">1,000 prompts</option><option value="10000">10,000 prompts</option></select></div></div>
+<div class="metrics"><div class="metric"><small>ENERGY DIFFERENCE</small><strong id="energy">—</strong></div><div class="metric"><small>EST. WATER DIFFERENCE</small><strong id="water">—</strong></div><div class="metric"><small>MODEL SIZE DIFFERENCE</small><strong id="size">—</strong></div></div><p class="note">Uses the existing sustainability-study benchmark values and water-estimation assumptions. Benchmark entries use one GPU each, but GPU types differ. This comparison does not determine whether a smaller model is suitable for a particular task.</p></div></div>
+</div><div class="wizard-actions"><button class="back" onclick="showStep(2)" type="button">← Back to AI options</button><button onclick="showStep(1)" type="button">Edit your answers</button></div></section></main>
+<script>
+const V=id=>document.getElementById(id).value;
+function updateAnswerContext(){
+ const v=id=>document.getElementById(id).value;
+ const costs=[...document.querySelectorAll('#costs input:checked')].map(x=>x.value);
+ const labels=[['Q1 · Operator',v('operator')],['Q2 · GPU',v('gpu')],['Q3 · External data',v('data')],['Q4 · Provider',v('cloud')],['Q5 · Costs',costs.length?costs.length+' categories':'None selected'],['Q6 · Switching',v('switching')],['Q7 · Internal control',v('control')],['Q8A · Sustainability',v('sustain')],['Q8B · Different models',v('multi')]];
+ const box=document.getElementById('answerChips');box.replaceChildren();
+ for(const [name,value] of labels){const chip=document.createElement('span');const key=document.createElement('b');key.textContent=name;chip.append(key,document.createTextNode('  '+value));box.appendChild(chip)}
+ document.getElementById('sustainLink').style.display=v('sustain')==='Yes'?'flex':'none';
+}
+function run(){updateAnswerContext();
+let op=V("operator"),gpu=V("gpu"),data=V("data"),cloud=V("cloud"),sw=V("switching"),ctrl=V("control"),sust=V("sustain"),multi=V("multi"),costs=[...document.querySelectorAll("#costs input:checked")].map(x=>x.value);
+
+// Operation & infrastructure
+document.getElementById("pOperate").textContent =
+op==="External provider" ? "This aligns with your stated preference for an external operator. Clarify which responsibilities the provider handles and which remain with your organization." :
+"Because the provider operates the model, this approach may reduce internal deployment and maintenance work. Clarify provider versus internal responsibilities.";
+
+document.getElementById("mOperate").textContent =
+"An external service can host and operate an open model. Clarify who handles deployment, security, monitoring, model updates, and support.";
+
+document.getElementById("sOperate").textContent =
+gpu==="No" && ctrl==="Yes" ? "You require internal control but do not currently have GPU infrastructure. Compute capacity, staffing, deployment, security, and maintenance would need investigation." :
+gpu==="No" ? "You do not currently have GPU infrastructure. If self-hosting is considered, determine the required compute capacity and who would operate and maintain it." :
+"GPU infrastructure is available, but its capacity, compatibility, staffing, security, and maintenance requirements still need evaluation.";
+
+// Data & organizational fit
+document.getElementById("pFit").textContent =
+data==="No" ? "Your intended data cannot be sent to an external provider, so determine whether this approach can meet that restriction for the intended use cases." :
+data==="Depends on data" ? "Some data may not be suitable for external processing. Identify which use cases and data types can use the provider, and review its data-handling terms." :
+"External processing is permitted, but provider privacy, security, retention, and integration terms still need review.";
+
+document.getElementById("mFit").textContent =
+(data==="No" ? "Hosting location and data handling are critical. Determine whether a managed-open environment can satisfy your data restrictions." :
+"Check where the open model and data would be hosted and whether the provider's data terms meet your requirements.") +
+(cloud!=="No" ? " Also examine integration with your existing "+cloud+" environment." : "");
+
+document.getElementById("sFit").textContent =
+ctrl==="Yes" ? "This approach supports direct infrastructure control. Determine whether it can meet your data, security, integration, and workflow requirements." :
+"Self-hosting provides direct infrastructure control, but determine whether that level of control is actually required and how it would integrate with current systems.";
+
+// Cost & ongoing requirements
+let missing=["API fees","hardware","cloud compute","staff","maintenance","migration"].filter(x=>!costs.map(y=>y.toLowerCase()).includes(x.toLowerCase()));
+let costlead=costs.length===0 ? "No major cost categories have been evaluated yet. " : (missing.length ? "Some cost categories remain unevaluated. " : "");
+document.getElementById("pTime").textContent=costlead+"Examine subscription/API usage, integration, provider dependence, support, and migration costs.";
+document.getElementById("mTime").textContent=costlead+"Examine hosting/service charges, integration, support, and the operational responsibilities retained by your organization.";
+document.getElementById("sTime").textContent=costlead+"Examine hardware or cloud GPU compute, staff, maintenance, upgrades, security operations, and migration requirements.";
+
+// Model flexibility
+let modelPrefix=multi==="Yes" ? "You are open to using different models for different tasks. " :
+multi==="Not sure" ? "You are not yet sure whether different tasks could use different models. " :
+"You currently expect to use the same model approach across tasks. ";
+document.getElementById("pModel").textContent=modelPrefix+"Check what model choices the provider makes available and whether different workloads can use different models where appropriate.";
+document.getElementById("mModel").textContent=modelPrefix+"Check which open models the managed service supports and whether workloads can be matched to different model requirements.";
+document.getElementById("sModel").textContent=modelPrefix+"Self-hosting can allow direct model choice, but each model's capability, infrastructure, and operational requirements must be evaluated.";
+
+// Sustainability
+document.getElementById("sustainBlock").style.display=sust==="Yes"?"block":"none";
+if(sust==="Yes"){
+document.getElementById("sustainHeading").textContent="Energy and water use are part of your model-selection considerations";
+document.getElementById("sustainBridgeText").textContent =
+multi==="Yes" ? "You indicated that energy and water use should be considered and that different models could be used for different tasks. Review the published benchmark evidence below, then compare the energy and estimated operational water use of five representative model configurations." :
+multi==="Not sure" ? "You indicated that energy and water use should be considered, but it is not yet clear whether different models could be used for different tasks. The evidence below shows resource-use differences across model and hardware configurations; task suitability must still be evaluated separately." :
+"You indicated that energy and water use should be considered, although different models by task are not currently being considered. The evidence and comparison below provide resource-use context without recommending that you change models.";
+document.getElementById("sus").style.display="block";route();
+}
+
+document.getElementById("results").style.display="block";
+document.getElementById("results").scrollIntoView({behavior:"smooth"});
+}
+const D={"1.24":.0028,"2.51":.0048,"6.66":.0147,"12.85":.0235,"32.51":.0356};function route(){let a=+V("m1"),b=+V("m2"),n=+V("prompts"),de=(D[a.toString()]-D[b.toString()])*n,dw=(de/1000)*(.550+1.170*3.142);document.getElementById("energy").textContent=de.toFixed(2)+" Wh";document.getElementById("water").textContent=dw.toFixed(4)+" L";document.getElementById("size").textContent=(a-b).toFixed(2)+"B";
+}
+</script><script id="wizard-behavior">
+let wizardHasCompared=false;
+function showStep(n){
+ if(n===2 && !wizardHasCompared){run();return;}
+ if(n===3 && !wizardHasCompared){run();}
+ for(let i=1;i<=3;i++)document.getElementById('wizard-step-'+i).style.display=(i===n?'block':'none');
+ document.querySelectorAll('.wizard-tab').forEach((b,i)=>{b.classList.toggle('active',i===n);if(i===n)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
+ if(n===3){const yes=V('sustain')==='Yes';document.getElementById('sustainBlock').style.display=yes?'block':'none';document.getElementById('sustain-off').style.display=yes?'none':'block';}
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function goCompare(){run();}
+function goSustain(){if(!wizardHasCompared){run();}showStep(3);}
+const originalDashboardRun=run;
+run=function(){
+ originalDashboardRun();wizardHasCompared=true;
+ document.getElementById('results').style.display='block';
+ showStep(2);
+};
+</script></body></html>
